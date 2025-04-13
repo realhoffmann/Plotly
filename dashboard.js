@@ -69,21 +69,21 @@ fetch("data.json")
         conditionSelect.appendChild(defaultConditionOption);
 
         const conditionLabels = {
-            9:  "Excellent",
-            8:  "Very Good",
-            7:  "Good",
-            6:  "Above Average",
-            5:  "Average",
-            4:  "Below Average",
-            3:  "Fair",
-            2:  "Poor",
-            1:  "Very Poor"
+            9: "Excellent",
+            8: "Very Good",
+            7: "Good",
+            6: "Above Average",
+            5: "Average",
+            4: "Below Average",
+            3: "Fair",
+            2: "Poor",
+            1: "Very Poor"
         };
 
         conditions.forEach(c => {
             const option = document.createElement("option");
             option.value = c;
-            const desc = conditionLabels[c]; 
+            const desc = conditionLabels[c];
             option.text = `${c} - ${desc}`;
             conditionSelect.appendChild(option);
         });
@@ -204,7 +204,10 @@ fetch("data.json")
             // Sale Price Distribution (Histogram)
             Plotly.newPlot("histogram", [{
                 x: filteredData.map(d => +d.SalePrice),
-                type: "histogram"
+                type: "histogram",
+                marker: {
+                    color: "#2874a6",
+                  }
             }], { title: "Sale Price Distribution" });
 
             // GrLivArea vs SalePrice (Scatter)
@@ -212,7 +215,10 @@ fetch("data.json")
                 x: filteredData.map(d => +d.GrLivArea),
                 y: filteredData.map(d => +d.SalePrice),
                 mode: "markers",
-                type: "scatter"
+                type: "scatter",
+                marker: {
+                    color: "#239b56",
+                  }
             }], { title: "GrLivArea vs SalePrice" });
 
             // Sale Price by Neighborhood (Box Plot)
@@ -253,6 +259,9 @@ fetch("data.json")
                 x: sortedYears,
                 y: avgPrices,
                 type: "scatter",
+                marker: {
+                    color: "#ca6f1e",
+                  },
                 mode: "lines+markers"
             }], { title: "Average Sale Price Over Time" });
         }
