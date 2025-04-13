@@ -3,22 +3,14 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Real Estate Dashboard</title>
-
-    <!-- Load external CSS -->
+    <title>Real Estate Dashboard - Hoffmann wi24m009</title>
     <link rel="stylesheet" href="style.css"/>
-
-    <!-- Plotly -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body>
-
-    <!-- Header area with light-blue background -->
     <div id="header">
-        <h1>Real Estate Dashboard</h1>
+        <h1>Real Estate Dashboard - Hoffmann wi24m009</h1>
         <div id="controls">
-            <!-- Your dropdowns, sliders, toggle button, etc. -->
-
             <label for="neighborhoodSelect">Neighborhood:</label>
             <select id="neighborhoodSelect"></select>
 
@@ -42,13 +34,11 @@
                 <input type="range" id="maxPriceRange">
             </div>
 
-            <!-- Example single toggle button + year display -->
             <button id="toggleBtn">Play</button>
             <span id="currentYear">(Year: None)</span>
         </div>
     </div>
 
-    <!-- Chart containers -->
     <div id="charts">
         <div id="histogram" class="chart-container"></div>
         <div id="scatter"   class="chart-container"></div>
@@ -56,7 +46,6 @@
         <div id="timeseries" class="chart-container"></div>
     </div>
 
-    <!-- Your JS (e.g. dashboard.js) -->
     <script src="dashboard.js"></script>
 </body>
 </html>

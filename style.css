@@ -1,46 +1,27 @@
-/* Body defaults */
 body {
     margin: 20px;
     font-family: Arial, sans-serif;
 }
 
-/* The header area (title, controls, etc.) */
 #header {
-    background-color: lightblue; /* Light-blue background */
-    padding: 1em;               /* Spacing around the content */
+    background-color: lightblue;
+    padding: 10px;
 }
 
-/* Controls container: dropdowns, sliders, toggle button, etc. */
 #controls {
     display: flex;
     flex-wrap: wrap;
-    gap: 1em;            /* Space between dropdowns/sliders/button */
-    margin-bottom: 20px; /* Extra space below the controls */
+    gap: 15px;
+    margin-bottom: 20px;
 }
 
-/* (Optional) styling for the slider container wrappers */
-.slider-container {
-    display: inline-block;
-    margin: 0 10px;
-}
-
-/* Charts container: all your chart divs */
 #charts {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
 }
 
-/* Each chart container */
 .chart-container {
-    flex: 0 0 50%;
     flex: 1 1 calc(50% - 20px);
-    height: 400px;
-}
-
-/* Responsive: on small screens, charts stack vertically */
-@media (max-width: 768px) {
-    .chart-container {
-        flex: 1 1 100%;
-    }
+    height: 350px;
 }

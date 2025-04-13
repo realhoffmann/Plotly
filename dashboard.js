@@ -1,14 +1,11 @@
 fetch("data.json")
     .then(res => res.json())
     .then(data => {
-        // -----------------------------------------------
-        // 1) Prepare unique values for each existing filter
-        // -----------------------------------------------
-        
+
         // Neighborhoods
         const neighborhoods = [...new Set(data.map(row => row.NeighborhoodName))];
 
-        // Years sold (parse "YrSold" like "01.01.2008" -> 2008)
+        // Years sold
         const uniqueYears = [
             ...new Set(
                 data.map(d => parseInt(d.YrSold.split(".")[2], 10))
@@ -20,16 +17,12 @@ fetch("data.json")
             ...new Set(data.map(d => +d.OverallCond))
         ].sort((a, b) => a - b);
 
-        // -------------------------------------------
-        // 2) Find min and max sale price in the data
-        // -------------------------------------------
+        // Find min and max sale price in the data
         const allPrices = data.map(d => +d.SalePrice);
         const minPrice = Math.min(...allPrices);
         const maxPrice = Math.max(...allPrices);
 
-        // ---------------------------------------------------
-        // 3) Get references to the select elements & sliders
-        // ---------------------------------------------------
+        // Get references to the select elements & sliders
         const neighborhoodSelect = document.getElementById("neighborhoodSelect");
         const yearSelect = document.getElementById("yearSelect");
         const conditionSelect = document.getElementById("conditionSelect");
@@ -40,14 +33,9 @@ fetch("data.json")
         const minPriceLabel = document.getElementById("minPriceLabel");
         const maxPriceLabel = document.getElementById("maxPriceLabel");
 
-        // Single toggle button + year display
         const toggleBtn = document.getElementById("toggleBtn");
         const currentYearSpan = document.getElementById("currentYear");
 
-        // -------------------------------------
-        // 4) Populate the Neighborhood/Year/Condition dropdowns
-        // -------------------------------------
-        
         // Neighborhood
         const defaultNeighborhoodOption = document.createElement("option");
         defaultNeighborhoodOption.value = "";
@@ -80,32 +68,42 @@ fetch("data.json")
         defaultConditionOption.text = "All Conditions";
         conditionSelect.appendChild(defaultConditionOption);
 
+        const conditionLabels = {
+            9:  "Excellent",
+            8:  "Very Good",
+            7:  "Good",
+            6:  "Above Average",
+            5:  "Average",
+            4:  "Below Average",
+            3:  "Fair",
+            2:  "Poor",
+            1:  "Very Poor"
+        };
+
         conditions.forEach(c => {
             const option = document.createElement("option");
             option.value = c;
-            option.text = c;
+            const desc = conditionLabels[c]; 
+            option.text = `${c} - ${desc}`;
             conditionSelect.appendChild(option);
         });
 
-        // -------------------------------------
-        // 5) Initialize the Price Range Sliders
-        // -------------------------------------
+
+        // Initialize the Price Range Sliders
         minPriceRange.min = minPrice;
         minPriceRange.max = maxPrice;
         minPriceRange.value = minPrice;
-        minPriceRange.step = 1000; // Adjust as you like
+        minPriceRange.step = 1000;
 
         maxPriceRange.min = minPrice;
         maxPriceRange.max = maxPrice;
         maxPriceRange.value = maxPrice;
-        maxPriceRange.step = 1000; // Adjust as you like
+        maxPriceRange.step = 1000;
 
         minPriceLabel.textContent = minPriceRange.value;
         maxPriceLabel.textContent = maxPriceRange.value;
 
-        // ----------------------------------
-        // 6) Listen for filter/slider changes
-        // ----------------------------------
+        // Listen for filter/slider changes
         neighborhoodSelect.addEventListener("change", updateCharts);
         yearSelect.addEventListener("change", updateCharts);
         conditionSelect.addEventListener("change", updateCharts);
@@ -128,44 +126,30 @@ fetch("data.json")
             updateCharts();
         });
 
-        // ---------------------------------------------
-        // 7) Single toggle button for Play/Pause
-        // ---------------------------------------------
+        // Play toggle button
         let isPlaying = false;
         let currentYearIndex = 0;
         let animationTimer = null;
 
-        // Called every time we move to the next year
         function stepAnimation() {
             if (!isPlaying) return;
-
-            // Pick the year from the sorted list
             const thisYear = uniqueYears[currentYearIndex];
-            // Set dropdown to that year
             yearSelect.value = thisYear;
-            // Show the year in the UI
             currentYearSpan.textContent = `(Year: ${thisYear})`;
-
             updateCharts();
-
-            // Move index forward
             currentYearIndex += 1;
             if (currentYearIndex >= uniqueYears.length) {
                 currentYearIndex = 0;
             }
-
-            // Schedule the next step after 1 second
             animationTimer = setTimeout(stepAnimation, 1000);
         }
 
         toggleBtn.addEventListener("click", () => {
             if (!isPlaying) {
-                // Start playing
                 isPlaying = true;
                 toggleBtn.textContent = "Pause";
-                stepAnimation(); 
+                stepAnimation();
             } else {
-                // Pause
                 isPlaying = false;
                 toggleBtn.textContent = "Play";
                 if (animationTimer) {
@@ -174,12 +158,8 @@ fetch("data.json")
             }
         });
 
-        // ------------------------------------------
-        // 8) Render charts initially with all data
-        // ------------------------------------------
         renderCharts(data);
 
-        // Called whenever a filter changes
         function updateCharts() {
             const selectedNeighborhood = neighborhoodSelect.value;
             const selectedYear = yearSelect.value;
@@ -220,17 +200,14 @@ fetch("data.json")
             renderCharts(filtered);
         }
 
-        // ---------------------------------
-        // 9) Define the renderCharts function
-        // ---------------------------------
         function renderCharts(filteredData) {
-            // (A) Sale Price Distribution (Histogram)
+            // Sale Price Distribution (Histogram)
             Plotly.newPlot("histogram", [{
                 x: filteredData.map(d => +d.SalePrice),
                 type: "histogram"
             }], { title: "Sale Price Distribution" });
 
-            // (B) GrLivArea vs SalePrice (Scatter)
+            // GrLivArea vs SalePrice (Scatter)
             Plotly.newPlot("scatter", [{
                 x: filteredData.map(d => +d.GrLivArea),
                 y: filteredData.map(d => +d.SalePrice),
@@ -238,7 +215,7 @@ fetch("data.json")
                 type: "scatter"
             }], { title: "GrLivArea vs SalePrice" });
 
-            // (C) Sale Price by Neighborhood (Box Plot)
+            // Sale Price by Neighborhood (Box Plot)
             const grouped = {};
             filteredData.forEach(d => {
                 if (!grouped[d.NeighborhoodName]) {
@@ -253,7 +230,7 @@ fetch("data.json")
             }));
             Plotly.newPlot("boxplot", boxData, { title: "Sale Price by Neighborhood" });
 
-            // (D) Average Sale Price Over Time
+            // Average Sale Price Over Time
             const timeMap = {};
             filteredData.forEach(d => {
                 const year = parseInt(d.YrSold.split(".")[2], 10);
