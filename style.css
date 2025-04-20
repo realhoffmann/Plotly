@@ -26,3 +26,7 @@ body {
     flex: 1 1 calc(50% - 20px);
     height: 350px;
 }
+
+#boxplot.chart-container {
+    height: 450px;
+}

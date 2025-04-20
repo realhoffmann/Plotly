@@ -240,8 +240,11 @@ fetch("data.json")
             }));
             Plotly.newPlot("boxplot", boxData, {
                 title: "Sale Price by Neighborhood",
-                xaxis: { title: "Neighborhood" },
-                yaxis: { title: "Sale Price (USD)" },
+                xaxis: { title: "Neighborhood",
+                    tickangle: -45,
+                    automargin: true 
+                 },
+                yaxis: { title: "Sale Price (USD)" },
                 showlegend: false
             });
 
