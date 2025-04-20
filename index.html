@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Real Estate Dashboard - Hoffmann wi24m009</title>
-    <link rel="stylesheet" href="style.css"/>
+    <link rel="stylesheet" href="style.css" />
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
+
 <body>
     <div id="header">
         <h1>Real Estate Dashboard - Hoffmann wi24m009</h1>
@@ -21,14 +23,14 @@
             <select id="conditionSelect"></select>
 
             <div class="slider-container">
-                <label for="minPriceRange">Min Price: 
+                <label for="minPriceRange">Min Price:
                     <span id="minPriceLabel"></span>
                 </label>
                 <input type="range" id="minPriceRange">
             </div>
 
             <div class="slider-container">
-                <label for="maxPriceRange">Max Price: 
+                <label for="maxPriceRange">Max Price:
                     <span id="maxPriceLabel"></span>
                 </label>
                 <input type="range" id="maxPriceRange">
@@ -41,11 +43,12 @@
 
     <div id="charts">
         <div id="histogram" class="chart-container"></div>
-        <div id="scatter"   class="chart-container"></div>
-        <div id="boxplot"   class="chart-container"></div>
+        <div id="scatter" class="chart-container"></div>
+        <div id="boxplot" class="chart-container"></div>
         <div id="timeseries" class="chart-container"></div>
     </div>
 
     <script src="dashboard.js"></script>
 </body>
+
 </html>

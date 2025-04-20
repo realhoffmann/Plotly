@@ -6,19 +6,15 @@ fetch("data.json")
         const neighborhoods = [...new Set(data.map(row => row.NeighborhoodName))];
 
         // Years sold
-        const uniqueYears = [
-            ...new Set(
-                data.map(d => parseInt(d.YrSold.split(".")[2], 10))
-            )
-        ].sort((a, b) => a - b);
+        const uniqueYears = [...new Set(data.map(d => +d.YrSold.split(".")[2]))]
+            .sort((a, b) => a - b);
 
         // Overall Condition
-        const conditions = [
-            ...new Set(data.map(d => +d.OverallCond))
-        ].sort((a, b) => a - b);
+        const conditions = [...new Set(data.map(d => d.OverallCond))]
+            .sort((a, b) => a - b);
 
         // Find min and max sale price in the data
-        const allPrices = data.map(d => +d.SalePrice);
+        const allPrices = data.map(d => d.SalePrice);
         const minPrice = Math.min(...allPrices);
         const maxPrice = Math.max(...allPrices);
 
@@ -34,7 +30,7 @@ fetch("data.json")
         const maxPriceLabel = document.getElementById("maxPriceLabel");
 
         const toggleBtn = document.getElementById("toggleBtn");
-        const currentYearSpan = document.getElementById("currentYear");
+        const currentYear = document.getElementById("currentYear");
 
         // Neighborhood
         const defaultNeighborhoodOption = document.createElement("option");
@@ -135,13 +131,13 @@ fetch("data.json")
             if (!isPlaying) return;
             const thisYear = uniqueYears[currentYearIndex];
             yearSelect.value = thisYear;
-            currentYearSpan.textContent = `(Year: ${thisYear})`;
+            currentYear.textContent = `(Year: ${thisYear})`;
             updateCharts();
             currentYearIndex += 1;
             if (currentYearIndex >= uniqueYears.length) {
                 currentYearIndex = 0;
             }
-            animationTimer = setTimeout(stepAnimation, 1000);
+            animationTimer = setTimeout(stepAnimation, 2000);
         }
 
         toggleBtn.addEventListener("click", () => {
@@ -178,10 +174,9 @@ fetch("data.json")
 
             // Year Sold filter
             if (selectedYear) {
-                filtered = filtered.filter(d => {
-                    const year = parseInt(d.YrSold.split(".")[2], 10);
-                    return year === +selectedYear;
-                });
+                filtered = filtered.filter(
+                    d => +d.YrSold.split(".")[2] === +selectedYear
+                );
             }
 
             // Condition filter
@@ -192,10 +187,9 @@ fetch("data.json")
             }
 
             // Price Range filter
-            filtered = filtered.filter(d => {
-                const price = +d.SalePrice;
-                return (price >= currentMinPrice && price <= currentMaxPrice);
-            });
+            filtered = filtered.filter(
+                d => +d.SalePrice >= currentMinPrice && +d.SalePrice <= currentMaxPrice
+            );
 
             renderCharts(filtered);
         }
@@ -207,8 +201,12 @@ fetch("data.json")
                 type: "histogram",
                 marker: {
                     color: "#2874a6",
-                  }
-            }], { title: "Sale Price Distribution" });
+                }
+            }], {
+                title: "Sale Price Distribution",
+                xaxis: { title: "Sale Price (USD)" },
+                yaxis: { title: "Count" }
+            });
 
             // GrLivArea vs SalePrice (Scatter)
             Plotly.newPlot("scatter", [{
@@ -218,11 +216,16 @@ fetch("data.json")
                 type: "scatter",
                 marker: {
                     color: "#239b56",
-                  }
-            }], { title: "GrLivArea vs SalePrice" });
+                }
+            }], {
+                title: "GrLivArea vs SalePrice",
+                xaxis: { title: "Above grade living area (sq ft)" },
+                yaxis: { title: "Sale Price (USD)" }
+            });
 
             // Sale Price by Neighborhood (Box Plot)
             const grouped = {};
+            const boxColor = "#7E30E1";
             filteredData.forEach(d => {
                 if (!grouped[d.NeighborhoodName]) {
                     grouped[d.NeighborhoodName] = [];
@@ -232,9 +235,15 @@ fetch("data.json")
             const boxData = Object.entries(grouped).map(([name, values]) => ({
                 y: values,
                 name,
-                type: "box"
+                type: "box",
+                marker: { color: boxColor }
             }));
-            Plotly.newPlot("boxplot", boxData, { title: "Sale Price by Neighborhood" });
+            Plotly.newPlot("boxplot", boxData, {
+                title: "Sale Price by Neighborhood",
+                xaxis: { title: "Neighborhood" },
+                yaxis: { title: "Sale Price (USD)" },
+                showlegend: false
+            });
 
             // Average Sale Price Over Time
             const timeMap = {};
@@ -261,8 +270,12 @@ fetch("data.json")
                 type: "scatter",
                 marker: {
                     color: "#ca6f1e",
-                  },
+                },
                 mode: "lines+markers"
-            }], { title: "Average Sale Price Over Time" });
+            }], {
+                title: "Average Sale Price Over Time",
+                xaxis: { title: "Year Sold" },
+                yaxis: { title: "Average Sale Price (USD)" }
+            });
         }
     });
